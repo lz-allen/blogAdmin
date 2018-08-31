@@ -46,26 +46,33 @@
         @current-change="handleCurrentChange"
         :page-sizes="[10, 20, 30, 40]"
         :page-size="10"
-        layout="total, sizes, prev, pager, next, jumper"
+        :current-page="currentPage"
+        layout="sizes, prev, next, jumper"
         :total="userTotal">
       </el-pagination>
     </div>
+    <admin-edit v-if="dialogIsShow" :userInfo="userInfo" @close="close"></admin-edit>
   </div>
 </template>
 
 <script>
+import AdminEdit from '@/views/adminEdit'
 export default {
-  components: {},
+  components: {
+    AdminEdit
+  },
+  adminEditIsShow: false,
   props: {},
   data() {
     return {
       inputVal: '',
-      pageindex: 1,
+      dialogIsShow: false,
       pagesize: 10,
-      userTotal: 100,
+      currentPage: 1,
+      userInfo: {},
       tableData: [
         {
-          _id: '5b73efe90adcd5ebd82448c7',
+          id: '5b73efe90adcd5ebd82448c7',
           createTime: '2018-08-30 07:57:27',
           loginTime: '2018-08-30 01:21:33',
           userName: '64567878',
@@ -73,7 +80,7 @@ export default {
           roles: ['admin']
         },
         {
-          _id: '5b73efe90adcd5ebd82448c8',
+          id: '5b73efe90adcd5ebd82448c8',
           createTime: '2018-08-30 07:57:27',
           loginTime: '2018-08-30 01:21:33',
           userName: 'zfsd',
@@ -108,6 +115,9 @@ export default {
   watch: {},
   computed: {},
   methods: {
+    close() {
+      this.dialogIsShow = false
+    },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
     },
@@ -115,7 +125,9 @@ export default {
       console.log(`当前页: ${val}`)
     },
     handleEdit(index, row) {
-      console.log(index, row)
+      this.dialogIsShow = true
+      console.log(row)
+      this.userInfo = row
     },
     handleDelete(index, row) {
       this.$confirm('此操作将永久删除,是否继续?', '提示', {

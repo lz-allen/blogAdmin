@@ -1,6 +1,5 @@
 <template>
   <div class="addArticle">
-    addArticle
   </div>
 </template>
 
