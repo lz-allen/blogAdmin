@@ -103,6 +103,8 @@ export default {
 </script>
 <style lang="less" scoped>
   .adminEdit {
+     text-align: center;
+     padding: 0 100px;
     .select{
       width: 100%;
     }

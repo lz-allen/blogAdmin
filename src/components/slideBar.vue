@@ -56,14 +56,11 @@ export default {
 </script>
 <style lang="less">
   .slideBar{
+    height: 100%;
     .el-menu-vertical-demo:not(.el-menu--collapse) {
       width: 200px;
-      min-height: 400px;
     }
     .menu{
-      position: fixed;
-      left: 0;
-      top: 0;
       height: 100%;
     }
     .icon{

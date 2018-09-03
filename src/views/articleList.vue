@@ -16,12 +16,16 @@
         tooltip-effect="dark"
         style="width: 100%">
         <el-table-column label="#" type="index" header-align="center" width="60"></el-table-column>
-        <el-table-column show-overflow-tooltip v-for="item in headerOptions" :prop="item.prop" :key="item.label" :label="item.label" :min-width="item.width" :filters="item.filters" :filter-method="filterTag" :sortable="item.sort" header-align="center">
+        <el-table-column show-overflow-tooltip v-if="item.filters" v-for="item in headerOptions" :prop="item.prop" :key="item.label" :label="item.label" :min-width="item.width" :filters="item.filters" :filter-method="filterTag" header-align="center">
           <template slot-scope="scope">
             <div v-if="scope.column.property === 'type'">
               <el-tag class="tag" type="primary" close-transition>{{scope.row.type}}</el-tag>
             </div>
-            <div v-else-if="scope.column.property === 'isVisibble'">{{scope.row.isVisibble?'是':'否'}}</div>
+          </template>
+        </el-table-column>
+         <el-table-column show-overflow-tooltip v-if="!item.filters" v-for="item in headerOptions" :prop="item.prop" :key="item.label" :label="item.label" :min-width="item.width" :sortable="item.sort" header-align="center">
+          <template slot-scope="scope">
+             <div v-if="scope.column.property === 'isVisibble'">{{scope.row.isVisibble?'是':'否'}}</div>
             <div v-else>{{scope.row[scope.column.property] || '无'}}</div>
           </template>
         </el-table-column>
@@ -74,7 +78,7 @@ export default {
           title: 'CSS3兼容',
           desc: 'CSS3中-moz、-ms、-webkit和-o分别代表什么意思',
           publishTime: '2018-08-30 23:57:27',
-          isVisibble: 1
+          isVisibble: true
         },
         {
           id: '5b73efe90adcd5ebd82448c8',
@@ -82,7 +86,7 @@ export default {
           title: 'CSS3兼容',
           desc: 'CSS3中-moz、-ms、-webkit和-o分别代表什么意思',
           publishTime: '2018-08-30 07:57:27',
-          isVisibble: 1
+          isVisibble: true
         }
       ],
       headerOptions: [
@@ -98,9 +102,7 @@ export default {
             { text: 'Webpack', value: 'Webpack' },
             { text: 'Node', value: 'Node' },
             { text: 'MongoDB', value: 'MongoDB' },
-            { text: '算法', value: '算法' },
-            { text: '工具', value: '工具' },
-            { text: '黑科技', value: '黑科技' }
+            { text: '服务器相关', value: '服务器相关' }
           ]
         },
         {

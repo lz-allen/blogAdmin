@@ -69,6 +69,7 @@ export default {
       dialogIsShow: false,
       pagesize: 10,
       currentPage: 1,
+      userTotal: 100,
       userInfo: {},
       tableData: [
         {
