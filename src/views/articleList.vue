@@ -172,6 +172,7 @@ export default {
 </script>
 <style lang="less" scoped>
   .articleList {
+    text-align: center;
     .search{
       display: flex;
       width: 400px;

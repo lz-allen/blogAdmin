@@ -157,6 +157,7 @@ export default {
 </script>
 <style lang="less" scoped>
   .adminList {
+    text-align: center;
     .search{
       display: flex;
       width: 400px;

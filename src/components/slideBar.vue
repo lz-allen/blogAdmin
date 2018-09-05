@@ -56,6 +56,7 @@ export default {
 </script>
 <style lang="less">
   .slideBar{
+    position: fixed;
     height: 100%;
     .el-menu-vertical-demo:not(.el-menu--collapse) {
       width: 200px;

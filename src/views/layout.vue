@@ -38,18 +38,17 @@ export default {
 </script>
 <style lang="less" scoped>
   .wrapper {
-    position: fixed;
-    width: 100%;
-    height: 100%;
     display: flex;
     .right{
-      flex: 1;
+      width: 100%;
+      margin-left: 200px;
+      transition: all .4s ease;
     }
     .content{
       padding: 20px;
     }
     .acive {
-      // margin-left: 65px;
+      margin-left: 65px;
     }
 
     .slide-fade-enter-active {

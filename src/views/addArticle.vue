@@ -19,7 +19,7 @@
         <el-form-item label="文章描述" :label-width="formLabelWidth" prop="desc">
           <el-input type="text" v-model="articleInfo.desc" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="文章内容" :label-width="formLabelWidth" prop="content">
+        <el-form-item label="文章内容" :label-width="formLabelWidth">
           <markdown></markdown>
         </el-form-item>
         <el-form-item label="发布时间" :label-width="formLabelWidth" prop="publishTime">
@@ -30,7 +30,7 @@
           <el-switch v-model="articleInfo.isVisible"></el-switch>
         </el-form-item>
     </el-form>
-    <el-button type="primary">创建文章</el-button>
+    <el-button class="btn" type="primary">创建文章</el-button>
     </div>
   </div>
 </template>
@@ -72,9 +72,6 @@ export default {
         desc: [
           { required: true, message: '请填写详情', trigger: 'blur' }
         ],
-        content: [
-          { required: true, message: '请填写内容', trigger: 'blur' }
-        ],
         publishTime: [
           { required: true, message: '请选择文章的发布时间', trigger: 'change', type: 'date' }
         ],
@@ -82,7 +79,7 @@ export default {
           { required: true, message: '请选择', trigger: 'change', type: 'boolean' }
         ]
       },
-      formLabelWidth: '120px'
+      formLabelWidth: '80px'
     }
   },
   watch: {},
@@ -104,7 +101,7 @@ export default {
       margin: 10px 0;
     }
     .form{
-      width: 80%;
+      width: 100%;
     }
     .select,.publishTime{
       width: 100%;
