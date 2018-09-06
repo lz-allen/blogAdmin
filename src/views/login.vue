@@ -5,7 +5,7 @@
       <el-form :model="loginInfo">
         <el-form-item>
           <icon name="yonghu" class="user"></icon>
-          <el-input type="text" placeholder="请输入用户名" v-model="loginInfo.name"></el-input>
+          <el-input type="text" placeholder="请输入用户名" v-model="loginInfo.userName"></el-input>
         </el-form-item>
         <el-form-item>
           <icon name="mima" class="pwd"></icon>
@@ -23,7 +23,7 @@ export default {
     return {
       loading: false,
       loginInfo: {
-        name: '',
+        userName: '',
         pwd: ''
       }
     }
@@ -32,7 +32,7 @@ export default {
   methods: {
     async login() {
       this.loading = true
-      if (!this.loginInfo.name || !this.loginInfo.pwd) {
+      if (!this.loginInfo.userName || !this.loginInfo.pwd) {
         this.$message({
           message: '请输入用户名或者密码',
           type: 'warning'
@@ -40,9 +40,12 @@ export default {
         this.loading = false
         return
       }
-      setTimeout(() => {
-        this.loading = false
-      }, 1000)
+      try {
+        await this.$store.dispatch('userLogin', this.loginInfo)
+        this.$router.push('/home')
+      } catch (error) {
+      }
+      this.loading = false
     }
   }
 }

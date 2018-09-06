@@ -22,7 +22,17 @@ export const constRouterMap = [
         path: 'home',
         name: '首页',
         component: _import('home')
-      },
+      }
+    ]
+  }
+]
+export const asyncRouterMap = [
+  {
+    path: '/permission',
+    name: '权限管理',
+    redirect: '/permission/adminList',
+    component: _import('layout'),
+    children: [
       {
         path: '/adminList',
         name: '管理员列表',
@@ -32,14 +42,22 @@ export const constRouterMap = [
         path: '/addAdmin',
         name: '添加管理员',
         component: _import('addAdmin')
-      },
+      }
+    ]
+  },
+  {
+    path: '/article',
+    name: '权限管理',
+    redirect: '/article/articleList',
+    component: _import('layout'),
+    children: [
       {
-        path: '/articleList',
+        path: '/article/articleList',
         name: '文章列表',
         component: _import('articleList')
       },
       {
-        path: '/addArticle',
+        path: '/article/addArticle',
         name: '添加文章',
         component: _import('addArticle')
       }

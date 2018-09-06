@@ -75,6 +75,7 @@ export default {
       this.$emit('input', this.val)
     },
     insertImg(e) {
+      console.log(e)
       let formData = new FormData()
       let img = ''
       formData.append('markdown_img', e.target.files[0])
@@ -82,8 +83,12 @@ export default {
       this.setCursorPosition(this.$refs.text, val, 6)
     },
     insertLink() {
+      let linkArr = this.link.split(' ')
+      console.log(linkArr)
+      let val = ''
       this.maskBol = false
-      let val = `[链接描述](${this.link})`
+      val = linkArr[1] ? `[${linkArr[1]}](${linkArr[0]})` : `[链接一下](${linkArr[0]})`
+      console.log(val)
       this.setCursorPosition(this.$refs.text, val, 5)
       this.link = 'http://'
     },
