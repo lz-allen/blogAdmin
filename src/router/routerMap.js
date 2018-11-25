@@ -10,12 +10,14 @@ export const constRouterMap = [
   {
     path: '/login',
     name: '登陆',
+    hidden: true,
     component: _import('login')
   },
   {
     path: '/',
-    name: '布局',
+    name: '主页',
     redirect: '/home',
+    icon: 'home',
     component: _import('layout'),
     children: [
       {
@@ -29,17 +31,20 @@ export const constRouterMap = [
 export const asyncRouterMap = [
   {
     path: '/permission',
-    name: '权限管理',
-    redirect: '/permission/adminList',
     component: _import('layout'),
+    name: '权限列表',
+    icon: 'quanxian',
+    dropdown: true,
+    redirect: '/permission/adminList',
+    meta: {role: ['admin']},
     children: [
       {
-        path: '/adminList',
+        path: 'adminList',
         name: '管理员列表',
         component: _import('adminList')
       },
       {
-        path: '/addAdmin',
+        path: 'addAdmin',
         name: '添加管理员',
         component: _import('addAdmin')
       }
@@ -47,17 +52,19 @@ export const asyncRouterMap = [
   },
   {
     path: '/article',
-    name: '权限管理',
-    redirect: '/article/articleList',
     component: _import('layout'),
+    name: '文章',
+    icon: 'wenzhang',
+    redirect: '/article/articleList',
+    dropdown: true,
     children: [
       {
-        path: '/article/articleList',
+        path: 'articleList',
         name: '文章列表',
         component: _import('articleList')
       },
       {
-        path: '/article/addArticle',
+        path: 'addArticle',
         name: '添加文章',
         component: _import('addArticle')
       }

@@ -15,7 +15,7 @@ const Cookie = {
     document.cookie = key + '=' + val + ';expires=' + date.toGMTString()
   },
   remove(key) {
-    this.set(key, 1, -1)
+    this.set(key, '', -1)
   }
 }
 export {

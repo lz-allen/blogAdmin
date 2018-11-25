@@ -96,11 +96,18 @@ export default {
       }
     },
     submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
+      let userInfo = JSON.parse(JSON.stringify(this.info))
+      this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          alert('submit!')
+          let data = await this.$store.dispatch('addUser', userInfo)
+          if (data.code) {
+            this.$message({
+              type: 'success',
+              message: '添加成功'
+            })
+            this.resetForm('info')
+          }
         } else {
-          console.log('error submit!!')
           return false
         }
       })

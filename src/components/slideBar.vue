@@ -1,26 +1,19 @@
 <template>
   <div class="slideBar">
   <el-menu router :default-active="$route.path" class="el-menu-vertical-demo menu" @open="handleOpen" :collapse="slide">
-    <template>
-       <el-menu-item index="/home">
-          <icon name="home"></icon>
-          <span slot="title" class="submenu_title">首页</span>
+    <template v-for="item in $store.state.permission.routers">
+       <el-menu-item v-if="!item.hidden&&!item.dropdown" :index="(item.path === '/'?item.path:item.path+'/') + item.children[0].path" :key="item.path">
+          <icon :name="item.icon"></icon>
+          <span slot="title" class="submenu_title">{{item.name}}</span>
        </el-menu-item>
-       <el-submenu index="/adminList">
+       <el-submenu v-if="!item.hidden&&item.dropdown" :index="item.path" :key="item.path">
         <template slot="title">
-          <icon name="quanxian"></icon>
-          <span slot="title" class="submenu_title">权限</span>
+          <icon :name="item.icon"></icon>
+          <span slot="title" class="submenu_title">{{item.name}}</span>
         </template>
-        <el-menu-item index="/adminList">管理员列表</el-menu-item>
-        <el-menu-item index="/addAdmin">添加管理员</el-menu-item>
-      </el-submenu>
-       <el-submenu :index="'/articleList'">
-        <template slot="title">
-          <icon name="wenzhang"></icon>
-          <span slot="title" class="submenu_title">文章</span>
+        <template v-for="child in item.children">
+          <el-menu-item :key="child.path" :index="item.path + '/' +child.path">{{child.name}}</el-menu-item>
         </template>
-        <el-menu-item index="/articleList">文章列表</el-menu-item>
-        <el-menu-item index="/addArticle">添加文章</el-menu-item>
       </el-submenu>
     </template>
   </el-menu>

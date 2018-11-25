@@ -3,7 +3,7 @@
     <div class="title">
       <ul>
         <li>图片
-          <input class="upFile" type="file" @change="insertImg">
+          <input class="upFile" accept="image/png,image/gif,image/jpeg" type="file" @change="insertImg">
         </li>
         <li @click="maskBol=true">链接</li>
         <li @click="insertCode">代码块</li>
@@ -15,7 +15,7 @@
     </div>
     <div class="content">
       <div class="left">
-        <textarea class="textarea" v-model="val" ref="text" @input="handleModelInput" @keydown.tab="tabMarkdown"></textarea>
+        <textarea class="textarea" v-model="val" ref="text" @keydown.tab="tabMarkdown"></textarea>
       </div>
       <div class="right hljs" v-html="renderHtml"></div>
     </div>
@@ -33,10 +33,10 @@ import marked from 'marked'
 import highlightJs from 'highlight.js'
 export default {
   components: {},
-  props: {},
+  props: ['textVal'],
   data() {
     return {
-      val: '',
+      val: this.textVal,
       maskBol: false,
       link: 'http://'
     }
@@ -72,23 +72,29 @@ export default {
       this.textarea.setSelectionRange(start + indent.length, start + selected.length)
     },
     handleModelInput() {
-      this.$emit('input', this.val)
+      this.$emit('content', {
+        textVal: this.val,
+        markdown: this.renderHtml
+      })
     },
-    insertImg(e) {
-      console.log(e)
+    async insertImg(e) {
       let formData = new FormData()
       let img = ''
       formData.append('markdown_img', e.target.files[0])
+      try {
+        let data = await this.$store.dispatch('markdown_uploadImg', formData)
+        img = data.data.markdown_img
+      } catch (error) {
+        console.log(error)
+      }
       let val = `![图片描述](${img})`
       this.setCursorPosition(this.$refs.text, val, 6)
     },
     insertLink() {
       let linkArr = this.link.split(' ')
-      console.log(linkArr)
       let val = ''
       this.maskBol = false
       val = linkArr[1] ? `[${linkArr[1]}](${linkArr[0]})` : `[链接一下](${linkArr[0]})`
-      console.log(val)
       this.setCursorPosition(this.$refs.text, val, 5)
       this.link = 'http://'
     },

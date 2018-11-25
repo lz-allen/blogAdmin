@@ -22,7 +22,7 @@ const user = {
       state.username = info.username
       state.roles = info.roles
     },
-    USERLIST(state, data) {
+    USER_LIST(state, data) {
       state.list = data.list
       state.total = data.total
     },
@@ -38,14 +38,77 @@ const user = {
     }) {
       commit('CLEARINFO')
     },
-    userLogin({state}, info) {
-      let {userName, pwd} = info
+    userLogin({
+      state,
+      commit
+    }, info) {
+      let {
+        userName,
+        pwd
+      } = info
       return new Promise((resolve, reject) => {
         axios.post('user/login', {
           username: userName,
           pwd: md5(pwd)
         }).then(res => {
-          state.token = getToken()
+          commit('SET_TOKEN', getToken())
+          resolve(res)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    getUserInfo({
+      state,
+      commit
+    }) {
+      return new Promise((resolve, reject) => {
+        axios.get('user/info', {
+          token: state.token
+        }).then(res => {
+          commit('SET_USERINFO', res.data)
+          resolve(res)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    userDelete({commit}, params) {
+      return new Promise((resolve, reject) => {
+        axios.post('user/delete', params).then(res => {
+          resolve(res)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    getUserList({
+      commit
+    }, params) {
+      return new Promise((resolve, reject) => {
+        axios.get('user/list', params).then((res) => {
+          commit('USER_LIST', res.data)
+          resolve()
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    userEdit({commit}, params) {
+      params.pwd = md5(params.pwd)
+      params.oldPwd = md5(params.oldPwd)
+      return new Promise((resolve, reject) => {
+        axios.post('user/edit', params).then((res) => {
+          resolve(res)
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    addUser({commit}, params) {
+      params.pass = md5(params.pass)
+      return new Promise((resolve, reject) => {
+        axios.post('/user/add', params).then(res => {
           resolve(res)
         }).catch(err => {
           reject(err)

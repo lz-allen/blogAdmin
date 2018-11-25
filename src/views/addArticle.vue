@@ -1,8 +1,10 @@
 <template>
   <div class="addArticle">
-    <h4 class="title">添加文章</h4>
+    <slot name="title">
+       <h4 class="title">添加文章</h4>
+    </slot>
     <div class="form">
-      <el-form status-icon :model="articleInfo" :rules="rules" ref="form" label-width="100px">
+      <el-form status-icon :model="articleInfo" :rules="rules" ref="forms" label-width="100px">
         <el-form-item label="文章类型" :label-width="formLabelWidth" prop="type">
           <el-select class="select" v-model="articleInfo.type" clearable placeholder="请选择">
               <el-option
@@ -20,7 +22,7 @@
           <el-input type="text" v-model="articleInfo.desc" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="文章内容" :label-width="formLabelWidth">
-          <markdown></markdown>
+          <markdown @content="getContent" :textVal="articleInfo.textVal" ref="markdown"></markdown>
         </el-form-item>
         <el-form-item label="发布时间" :label-width="formLabelWidth" prop="publishTime">
     <el-date-picker class="publishTime" v-model="articleInfo.publishTime" type="date" placeholder="选择日期">
@@ -30,7 +32,9 @@
           <el-switch v-model="articleInfo.isVisible"></el-switch>
         </el-form-item>
     </el-form>
-    <el-button class="btn" type="primary">创建文章</el-button>
+    <el-button class="btn" type="primary" :loading="loanding" @click="submit('forms')">
+      <slot name="btn">创建文章</slot>
+    </el-button>
     </div>
   </div>
 </template>
@@ -41,27 +45,22 @@ export default {
   components: {
     Markdown
   },
-  props: {},
+  props: ['article'],
   data() {
     return {
       articleInfo: {
         type: 'JavaScript',
         title: '',
         desc: '',
-        content: '',
+        textVal: '',
+        markdown: '',
+        total: 0,
+        comment: [],
         publishTime: new Date(),
         isVisible: true
       },
-      typeArr: [
-        { text: 'HTML', value: 'HTML' },
-        { text: 'CSS', value: 'CSS' },
-        { text: 'JavaScript', value: 'JavaScript' },
-        { text: 'Vue', value: 'Vue' },
-        { text: 'Webpack', value: 'Webpack' },
-        { text: 'Node', value: 'Node' },
-        { text: 'MongoDB', value: 'MongoDB' },
-        { text: '服务器相关', value: '服务器相关' }
-      ],
+      loanding: false,
+      typeArr: [],
       rules: {
         type: [
           {required: true, message: '请选择文章类型', trigger: 'change'}
@@ -73,7 +72,7 @@ export default {
           { required: true, message: '请填写详情', trigger: 'blur' }
         ],
         publishTime: [
-          { required: true, message: '请选择文章的发布时间', trigger: 'change', type: 'date' }
+          { required: true, message: '请选择文章的发布时间', trigger: 'change' }
         ],
         isVisible: [
           { required: true, message: '请选择', trigger: 'change', type: 'boolean' }
@@ -84,9 +83,61 @@ export default {
   },
   watch: {},
   computed: {},
-  methods: {},
-  created() {},
-  mounted() {}
+  methods: {
+    getContent(obj) {
+      this.articleInfo.textVal = obj.textVal
+      this.articleInfo.markdown = obj.markdown
+    },
+    getType() {
+      this.$store.dispatch('getType').then(res => {
+        this.typeArr = res.data
+      })
+    },
+    setArticleInfo() {
+      if (this.article) {
+        for (const [key, value] of Object.entries(this.article)) {
+          if (key === 'publishTime') {
+            this.articleInfo[key] = new Date()
+          }
+          this.articleInfo[key] = value
+        }
+      }
+    },
+    submit(formName) {
+      this.loanding = true
+      this.$refs[formName].validate(async(valid) => {
+        if (valid) {
+          // 触发markdown组件的方法，使得父组件接收参数
+          this.$refs.markdown.handleModelInput()
+          if (this.article) {
+            let data = await this.$store.dispatch('updateArticle', this.articleInfo)
+            if (data.data.n) {
+              this.$message({
+                type: 'success',
+                message: '修改成功'
+              })
+            }
+            this.loanding = false
+            return
+          }
+          let data = await this.$store.dispatch('addArticle', this.articleInfo)
+          if (data.data._id) {
+            this.$message({
+              type: 'success',
+              message: '添加成功'
+            })
+            this.loanding = false
+          }
+        }
+      })
+    }
+  },
+  created() {
+    this.getType()
+    this.setArticleInfo()
+  },
+  mounted() {
+  }
 }
 
 </script>

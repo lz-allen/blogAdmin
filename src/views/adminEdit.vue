@@ -3,7 +3,7 @@
     <el-dialog title="管理员编辑" :visible.sync="dialogFormVisible" center @close="close">
       <el-form :model="userInfo" :rules="rules" ref="form">
         <el-form-item label="用户名" :label-width="formLabelWidth" prop="userName">
-          <el-input type="text" v-model="userInfo.userName" auto-complete="off"></el-input>
+          <el-input type="text" v-model="userInfo.username" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="姓名" :label-width="formLabelWidth" prop="name">
           <el-input type="text" v-model="userInfo.name" auto-complete="off"></el-input>
@@ -49,7 +49,7 @@ export default {
         {label: '普通管理员', value: 'default'}
       ],
       rules: {
-        userName: [
+        username: [
           { required: true, message: '请填写用户名', trigger: 'blur' }
         ],
         name: [
@@ -81,11 +81,15 @@ export default {
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
           try {
-            setTimeout(() => {
-              this.loading = false
-              this.close()
-              this.$router.push('/adminList')
-            }, 1000)
+            let data = await this.$store.dispatch('userEdit', this.userInfo)
+            if (data.code) {
+              this.$message({
+                type: 'success',
+                message: '修改成功'
+              })
+            }
+            this.loading = false
+            this.close()
           } catch (e) {
             this.loading = false
           }

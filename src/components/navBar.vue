@@ -9,7 +9,7 @@
         <img class="avatar" src="../../static/image/avatar.jpeg" alt="">
       </span>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item command="user">用户名</el-dropdown-item>
+        <el-dropdown-item command="user">{{userName}}</el-dropdown-item>
         <el-dropdown-item command="exit">退出</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import { removeToken } from '../utils/auth'
+import { mapGetters } from 'vuex'
 export default {
   name: 'navBar',
   components: {},
@@ -47,11 +49,18 @@ export default {
       }
       this.pathList.splice(1, 1, second)
     },
-    handleCommand(command) {
-      console.log(command)
+    async handleCommand(command) {
+      if (command === 'exit') {
+        removeToken()
+        await this.$store.dispatch('clearInfo')
+        location.reload()
+      }
     }
   },
   created() {},
+  computed: {
+    ...mapGetters(['userName'])
+  },
   mounted() {},
   watch: {
     $route() {

@@ -3,14 +3,15 @@
     <div class="search">
       <el-input
         placeholder="请输入内容"
+        @keyup.enter.native="getUserList"
         v-model="inputVal">
         <i slot="prefix" class="el-input__icon el-icon-search"></i>
       </el-input>
-      <el-button class="searchBtn" type="primary" icon="el-icon-search">搜索</el-button>
+      <el-button class="searchBtn" type="primary" :loading="loading" icon="el-icon-search" @click="getUserList">搜索</el-button>
     </div>
     <div class="table">
         <el-table
-          :data="tableData"
+          :data="userList"
           stripe
           border
           tooltip-effect="dark"
@@ -21,6 +22,7 @@
               <div v-if="scope.column.property === 'roles'">
                 <el-tag class="tag" type="primary" close-transition v-for="(tag,index) in scope.row.roles" :key="index">{{tag}}</el-tag>
               </div>
+              <div v-else-if="scope.column.property === 'loginTime'">{{scope.row[scope.column.property]| formatTime}}</div>
               <div v-else>{{scope.row[scope.column.property] || '无'}}</div>
             </template>
           </el-table-column>
@@ -57,6 +59,8 @@
 
 <script>
 import AdminEdit from '@/views/adminEdit'
+import { mapGetters } from 'vuex'
+import formatTime from '@/utils/formatTime'
 export default {
   components: {
     AdminEdit
@@ -68,36 +72,18 @@ export default {
       inputVal: '',
       dialogIsShow: false,
       pagesize: 10,
+      loading: false,
       currentPage: 1,
-      userTotal: 100,
       userInfo: {},
-      tableData: [
-        {
-          id: '5b73efe90adcd5ebd82448c7',
-          createTime: '2018-08-30 07:57:27',
-          loginTime: '2018-08-30 01:21:33',
-          userName: '64567878',
-          name: 'lxxf',
-          roles: ['admin']
-        },
-        {
-          id: '5b73efe90adcd5ebd82448c8',
-          createTime: '2018-08-30 07:57:27',
-          loginTime: '2018-08-30 01:21:33',
-          userName: 'zfsd',
-          name: '我',
-          roles: ['default']
-        }
-      ],
       headerOptions: [
         {
           label: '用户名',
-          width: '100',
-          prop: 'userName'
+          width: '80',
+          prop: 'username'
         },
         {
           label: '姓名',
-          width: '100',
+          width: '80',
           prop: 'name'
         },
         {
@@ -107,28 +93,35 @@ export default {
         },
         {
           label: '登录时间',
-          width: '120',
+          width: '140',
           prop: 'loginTime'
         }
       ]
     }
   },
+  filters: {
+    formatTime
+  },
   watch: {},
-  computed: {},
+  computed: {
+    ...mapGetters(['userList', 'userTotal'])
+  },
   methods: {
     close() {
       this.dialogIsShow = false
+      this.getUserList()
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
+      this.pagesize = val
+      this.getUserList()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
+      this.currentPage = val
+      this.getUserList()
     },
     handleEdit(index, row) {
       this.dialogIsShow = true
-      console.log(row)
-      this.userInfo = row
+      this.userInfo = JSON.parse(JSON.stringify(row))
     },
     handleDelete(index, row) {
       this.$confirm('此操作将永久删除,是否继续?', '提示', {
@@ -136,22 +129,44 @@ export default {
         cancelButtonText: '取消',
         type: 'warning',
         center: true
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功'
-        })
-        this.tableData.splice(index, 1)
+      }).then(async() => {
+        let data = await this.$store.dispatch('userDelete', {_id: row._id})
+        if (data.data.n) {
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+          this.userList.splice(index, 1)
+        } else {
+          this.$message({
+            type: 'error',
+            message: data.msg
+          })
+        }
       }).catch(() => {
         this.$message({
           type: 'info',
           message: '已取消删除'
         })
       })
+    },
+    async getUserList() {
+      this.loading = true
+      try {
+        await this.$store.dispatch('getUserList', {
+          keywords: this.inputVal,
+          currentPage: this.currentPage,
+          pageSize: this.pagesize
+        })
+        this.loading = false
+      } catch (error) {
+        this.loading = false
+      }
     }
   },
-  created() {},
-  mounted() {}
+  created() {
+    this.getUserList()
+  }
 }
 
 </script>

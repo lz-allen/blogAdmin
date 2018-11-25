@@ -1,5 +1,5 @@
 import { Cookie } from './storage'
-const TokenKey = 'Token_Auth'
+const TokenKey = 'Token-Auth'
 
 const getToken = function() {
   return Cookie.get(TokenKey)

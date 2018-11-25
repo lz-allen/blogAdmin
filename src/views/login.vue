@@ -5,11 +5,11 @@
       <el-form :model="loginInfo">
         <el-form-item>
           <icon name="yonghu" class="user"></icon>
-          <el-input type="text" placeholder="请输入用户名" v-model="loginInfo.userName"></el-input>
+          <el-input type="text" placeholder="请输入用户名" v-model.trim="loginInfo.userName"></el-input>
         </el-form-item>
         <el-form-item>
           <icon name="mima" class="pwd"></icon>
-          <el-input type="password" placeholder="请输入密码" v-model="loginInfo.pwd"></el-input>
+          <el-input type="password" placeholder="请输入密码" @keyup.enter.native="login" v-model.trim="loginInfo.pwd"></el-input>
         </el-form-item>
       </el-form>
       <el-button type="primary" class="submit" @click="login" :loading="loading">登录</el-button>
@@ -41,9 +41,13 @@ export default {
         return
       }
       try {
-        await this.$store.dispatch('userLogin', this.loginInfo)
-        this.$router.push('/home')
+        let flag = await this.$store.dispatch('userLogin', this.loginInfo)
+        flag.code && this.$router.push('/home')
       } catch (error) {
+        this.$message({
+          message: '服务器错误',
+          type: 'warning'
+        })
       }
       this.loading = false
     }
