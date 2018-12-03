@@ -21,6 +21,13 @@
         <el-form-item label="文章描述" :label-width="formLabelWidth" prop="desc">
           <el-input type="text" v-model="articleInfo.desc" auto-complete="off"></el-input>
         </el-form-item>
+        <el-form-item label="缩略图" :label-width="formLabelWidth" prop="img">
+          <div class="imgWrap" v-show="articleInfo.src">
+            <img :src="articleInfo.src" alt="">
+              <el-button type="danger" icon="el-icon-delete" @click="articleInfo.src=''"></el-button>
+          </div>
+          <input v-show="!articleInfo.src" accept="image/png,image/gif,image/jpeg" type="file" @change="insertImg">
+        </el-form-item>
         <el-form-item label="文章内容" :label-width="formLabelWidth">
           <markdown @content="getContent" :textVal="articleInfo.textVal" ref="markdown"></markdown>
         </el-form-item>
@@ -53,6 +60,7 @@ export default {
         title: '',
         desc: '',
         textVal: '',
+        src: '',
         markdown: '',
         total: 0,
         comment: [],
@@ -78,7 +86,7 @@ export default {
           { required: true, message: '请选择', trigger: 'change', type: 'boolean' }
         ]
       },
-      formLabelWidth: '80px'
+      formLabelWidth: '100px'
     }
   },
   watch: {},
@@ -92,6 +100,22 @@ export default {
       this.$store.dispatch('getType').then(res => {
         this.typeArr = res.data
       })
+    },
+    async insertImg(e) {
+      let formData = new FormData()
+      formData.append('markdown_img', e.target.files[0])
+      try {
+        let data = await this.$store.dispatch('markdown_uploadImg', formData)
+        if (data.data.markdown_img) {
+          this.$message({
+            type: 'success',
+            message: '上传成功'
+          })
+        }
+        this.articleInfo.src = data.data.markdown_img
+      } catch (error) {
+        console.log(error)
+      }
     },
     setArticleInfo() {
       if (this.article) {
@@ -153,6 +177,18 @@ export default {
     }
     .form{
       width: 100%;
+      .imgWrap{
+        width: 12rem;
+        height: 6rem;
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        img{
+          width: 6rem;
+          height: 6rem;
+        }
+      }
     }
     .select,.publishTime{
       width: 100%;
