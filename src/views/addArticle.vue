@@ -24,7 +24,7 @@
         <el-form-item label="缩略图" :label-width="formLabelWidth" prop="img">
           <div class="imgWrap" v-show="articleInfo.src">
             <img :src="articleInfo.src" alt="">
-              <el-button type="danger" icon="el-icon-delete" @click="articleInfo.src=''"></el-button>
+              <el-button type="danger" icon="el-icon-delete" @click="deleteImg"></el-button>
           </div>
           <input v-show="!articleInfo.src" accept="image/png,image/gif,image/jpeg" type="file" @change="insertImg">
         </el-form-item>
@@ -114,7 +114,28 @@ export default {
         }
         this.articleInfo.src = data.data.markdown_img
       } catch (error) {
-        console.log(error)
+        this.$message({
+          type: 'error',
+          message: error
+        })
+      }
+    },
+    async deleteImg() {
+      let filename = this.articleInfo.src.split('/')[5]
+      try {
+        let data = await this.$store.dispatch('markdown_deleteImg', { filename })
+        if (data.data.code) {
+          this.$message({
+            type: 'success',
+            message: '文件删除成功'
+          })
+          this.articleInfo.src = ''
+        }
+      } catch (error) {
+        this.$message({
+          type: 'error',
+          message: error
+        })
       }
     },
     setArticleInfo() {

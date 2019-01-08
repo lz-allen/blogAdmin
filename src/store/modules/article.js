@@ -71,6 +71,15 @@ const article = {
           reject(err)
         })
       })
+    },
+    markdown_deleteImg({commit}, params) {
+      return new Promise((resolve, reject) => {
+        axios.post('markdown_delete_img', params).then(res => {
+          resolve(res)
+        }).catch(err => {
+          reject(err)
+        })
+      })
     }
   }
 }
